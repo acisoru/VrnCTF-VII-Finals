@@ -1,0 +1,9 @@
+name: peter_notes
+
+services:
+  app:
+    build: .
+    ports:
+      - "3002:5000"
+    volumes:
+      - .:/app

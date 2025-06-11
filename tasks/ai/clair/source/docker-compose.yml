@@ -1,0 +1,12 @@
+services:
+  llm-ctf:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    gpus: all
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./logs:/app/logs

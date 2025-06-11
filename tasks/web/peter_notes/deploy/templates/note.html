@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ note['title'] }} - Peter Notes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .note-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-top: 20px;
+        }
+        .note-title {
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .vulnerability-warning {
+            border-left: 4px solid #dc3545;
+            background-color: #fff3f3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 rounded">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('index') }}">Peter Notes</a>
+                <div class="navbar-nav ms-auto">
+                    <span class="navbar-text me-3">User: {{ session['username'] }}</span>
+                    <a href="{{ url_for('view_notes') }}" class="btn btn-outline-primary me-2">
+                        All Notes
+                    </a>
+                    <a class="btn btn-outline-danger" href="{{ url_for('logout') }}">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="note-container">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 class="note-title">{{ note['title'] }}</h1>
+                <a href="{{ url_for('add_note') }}" class="btn btn-success">
+                    + New Note
+                </a>
+            </div>
+            
+            <div class="note-content mb-4">
+                {{ note['content'] | replace('\n', '<br>') | safe }}
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <small class="text-muted">Note ID: {{ request.path.split('/')[-1] }}</small>
+                <div>
+                    <!-- Edit button would go here in a real app -->
+                    <a href="#" class="btn btn-sm btn-outline-secondary disabled">Edit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Icons for Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

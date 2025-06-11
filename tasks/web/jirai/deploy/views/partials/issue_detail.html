@@ -1,0 +1,72 @@
+<div class="issue-detail-container">
+    <div class="issue-detail-header">
+        <div class="issue-id">#{{.Issue.ID}}</div>
+        <div class="issue-badges">
+            <span class="status-badge status-{{.Issue.Status}}">{{.Issue.Status}}</span>
+            <span class="priority-badge priority-{{.Issue.Priority}}">{{.Issue.Priority}}</span>
+        </div>
+    </div>
+    
+    <div class="issue-metadata">
+        <div class="meta-item">
+            <strong>Created:</strong> {{.Issue.Created.Format "Jan 2, 2006 15:04:05"}}
+        </div>
+        <div class="meta-item">
+            <strong>Updated:</strong> {{.Issue.Updated.Format "Jan 2, 2006 15:04:05"}}
+        </div>
+        <div class="meta-item">
+            <strong>Creator:</strong> {{.Issue.Creator}}
+        </div>
+        <div class="meta-item">
+            <strong>Assignee:</strong> {{.Issue.Assignee}}
+        </div>
+    </div>
+    
+    <div class="issue-section">
+        <h3>Description</h3>
+        <div class="issue-description">
+            {{if .Issue.Description}}
+                {{.Issue.Description}}
+            {{else}}
+                <em>No description provided</em>
+            {{end}}
+        </div>
+    </div>
+    
+    <div class="issue-section">
+        <h3>Labels</h3>
+        <div class="issue-labels">
+            {{range .Issue.Labels}}
+                <span class="label">{{.}}</span>
+            {{else}}
+                <em>No labels</em>
+            {{end}}
+        </div>
+    </div>
+    
+    <div class="issue-section">
+        <h3>Custom Fields</h3>
+        <div class="issue-custom-fields">
+            {{if .Issue.Fields}}
+                <table class="custom-fields-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range $key, $value := .Issue.Fields}}
+                        <tr>
+                            <td>{{$key}}</td>
+                            <td>{{$value}}</td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            {{else}}
+                <em>No custom fields</em>
+            {{end}}
+        </div>
+    </div>
+</div>

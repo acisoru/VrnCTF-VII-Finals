@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mx-auto" style="max-width: 400px;">
+  <h2>Авторизация</h2>
+  {% if error %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ error }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+
+  {% if success %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ success }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+
+  <form method="post">
+    <div class="mb-3">
+      <label>Имя пользователя</label>
+      <input name="username" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Пароль</label>
+      <input type="password" name="password" class="form-control" required>
+    </div>
+    <button class="btn btn-primary w-100">Войти</button>
+  </form>
+</div>
+{% endblock %}

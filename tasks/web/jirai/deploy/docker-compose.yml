@@ -1,0 +1,42 @@
+name: jirai
+
+services:
+  scylla:
+    image: scylladb/scylla:latest
+    container_name: jirai-scylla
+    ports:
+      - "9042:9042"
+    environment:
+      - SCYLLA_CLUSTER_NAME=jirai_cluster
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh -e 'describe keyspaces'"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    command: --smp 2 --memory 1G
+
+  setup:
+    image: scylladb/scylla:latest
+    depends_on:
+      scylla:
+        condition: service_healthy
+    volumes:
+      - ./scripts/init.cql:/scylla_scripts/init.cql
+      - ./scripts/initdb.sh:/scylla_scripts/initdb.sh
+    entrypoint: [ "bash", "/scylla_scripts/initdb.sh" ]
+    
+  app:
+    build: .
+    container_name: jirai-app
+    ports:
+      - "3009:3000"
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+    environment:
+      - CASSANDRA_HOST=scylla
+      - CASSANDRA_PORT=9042
+      - CASSANDRA_KEYSPACE=jirai
+      - CASSANDRA_USER=readonly_user
+      - CASSANDRA_PASSWORD=readonly_password
+    restart: unless-stopped

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- HTMX for interactive UI -->
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <!-- Alpine.js for UI interactions -->
+    <script src="https://unpkg.com/alpinejs@3.13.0" defer></script>
+    <style>
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+        .input-hint {
+            position: relative;
+            margin-left: 10px;
+        }
+        .hint-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            cursor: pointer;
+        }
+        .hint-content {
+            display: none;
+            position: absolute;
+            right: 30px;
+            top: -10px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            width: 300px;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .hint-icon:hover + .hint-content {
+            display: block;
+        }
+        code {
+            background-color: #eee;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <h1><a href="/">Jirai</a></h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/issues">Issues</a></li>
+                <li><a href="/issues/new">Create Issue</a></li>
+                <li><a href="/search">Search</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="page-header">
+                <h1>Search Issues</h1>
+            </div>
+            
+            <div class="search-container">
+                <div class="search-form-container">
+                    <form hx-get="/search" 
+                          hx-target="#search-results" 
+                          hx-trigger="submit" 
+                          hx-indicator="#search-indicator"
+                          class="search-form">
+                        <div class="form-group">
+                            <label for="title">Title Contains</label>
+                            <input type="text" id="title" name="title" class="form-control" value="{{index .Filters "title"}}">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="status">Status</label>
+                                <select id="status" name="status" class="form-control">
+                                    <option value="">Any</option>
+                                    <option value="todo" {{if eq (index .Filters "status") "todo"}}selected{{end}}>To Do</option>
+                                    <option value="in_progress" {{if eq (index .Filters "status") "in_progress"}}selected{{end}}>In Progress</option>
+                                    <option value="review" {{if eq (index .Filters "status") "review"}}selected{{end}}>In Review</option>
+                                    <option value="done" {{if eq (index .Filters "status") "done"}}selected{{end}}>Done</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group col-md-6">
+                                <label for="priority">Priority</label>
+                                <select id="priority" name="priority" class="form-control">
+                                    <option value="">Any</option>
+                                    <option value="low" {{if eq (index .Filters "priority") "low"}}selected{{end}}>Low</option>
+                                    <option value="medium" {{if eq (index .Filters "priority") "medium"}}selected{{end}}>Medium</option>
+                                    <option value="high" {{if eq (index .Filters "priority") "high"}}selected{{end}}>High</option>
+                                    <option value="critical" {{if eq (index .Filters "priority") "critical"}}selected{{end}}>Critical</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="assignee">Assignee</label>
+                            <input type="text" id="assignee" name="assignee" class="form-control" value="{{index .Filters "assignee"}}">
+                        </div>
+                
+                        <div class="advanced-search-toggle" id="advanced-search-toggle">
+                            <a href="#" onclick="toggleAdvancedSearch(); return false;">Advanced Options</a>
+                        </div>
+                        
+                        <div class="advanced-search-options" id="advanced-search-options" style="display: none;">
+                            <div class="form-group">
+                                <label for="creator">Creator</label>
+                                <input type="text" id="creator" name="creator" class="form-control" value="{{index .Filters "creator"}}">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="raw_query">Direct Query (Advanced)</label>
+                                <div class="input-group">
+                                    <input type="text" id="raw_query" name="raw_query" class="form-control" 
+                                           value="{{index .Filters "raw_query"}}" 
+                                           placeholder="Example: status = 'open' OR hidden = true">
+                                    <div class="input-hint">
+                                        <span class="hint-icon" title="NoSQL Injection Hint">?</span>
+                                        <div class="hint-content">
+                                            <p>This field is vulnerable to NoSQL injection!</p>
+                                            <p>Try these working examples:</p>
+                                            <ul>
+                                                <li><code>status = 'open' OR hidden = true</code></li>
+                                                <li><code>id LIKE 'JIRA-%' OR id = 'flag-issue-9876'</code></li>
+                                                <li><code>assignee = 'nobody' OR title LIKE '%FLAG%'</code></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <small class="form-text text-muted">
+                                    <strong>NoSQL Injection Playground:</strong> This input is vulnerable! Any query here gets ALLOW FILTERING added.
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                            <div id="search-indicator" class="htmx-indicator">Searching...</div>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="search-results-container">
+                    <h2>Search Results</h2>
+                    <div id="search-results">
+                        {{if .Issues}}
+                            <p>Found {{.Count}} issues matching your search criteria.</p>
+                            <table class="issues-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Status</th>
+                                        <th>Priority</th>
+                                        <th>Assignee</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{range .Issues}}
+                                    <tr>
+                                        <td><a href="/issues/{{.ID}}">{{.ID}}</a></td>
+                                        <td>{{.Title}}</td>
+                                        <td><span class="status-badge status-{{.Status}}">{{.Status}}</span></td>
+                                        <td><span class="priority-badge priority-{{.Priority}}">{{.Priority}}</span></td>
+                                        <td>{{.Assignee}}</td>
+                                        <td class="actions">
+                                            <a href="/issues/{{.ID}}" class="btn btn-sm btn-info">View</a>
+                                        </td>
+                                    </tr>
+                                    {{end}}
+                                </tbody>
+                            </table>
+                        {{else}}
+                            <p>No issues found matching your search criteria.</p>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Jirai - A JIRA-like Service. This application contains a deliberate NoSQL injection vulnerability in the search functionality. Try to find hidden issues by bypassing the default filters!</p>
+        </div>
+    </footer>
+    
+    <script src="/static/js/main.js"></script>
+    <script>
+        function toggleAdvancedSearch() {
+            const advancedOptions = document.getElementById('advanced-search-options');
+            advancedOptions.style.display = advancedOptions.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

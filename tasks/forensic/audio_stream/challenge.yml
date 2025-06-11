@@ -1,0 +1,22 @@
+name: "Секрет, унесенный Белым морем"
+author: "@jettplay"
+category: "forensic"
+description: |
+  > Из донесения капитана Корнелиуса Крюйса нашей разведке:
+  "Шведы разделяют свои послания на сотни частей - ни один корабль не везет полного текста.
+  И если собрать части вместе, можно услышать шепот... странный шепот"
+attribution: "Автор [@jettplay](https://t.me/jettplay)"
+value: 100
+type: dynamic
+extra:
+    initial: 100
+    decay: 10
+    minimum: 10
+flags:
+  - vrnctf{4tt4ck_t0m0rr0w}
+files: 
+  - public/task.pcap
+hints:
+  - Сигнатура MP3 файла может помочь
+state: visible
+version: "0.1"

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} - Jirai</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- HTMX for interactive UI -->
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <!-- Alpine.js for UI interactions -->
+    <script src="https://unpkg.com/alpinejs@3.13.0" defer></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <h1><a href="/">Jirai</a></h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/issues">Issues</a></li>
+                <li><a href="/issues/new">Create Issue</a></li>
+                <li><a href="/search">Search</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            {{embed}}
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Jirai - A JIRA-like Service. This application contains a deliberate NoSQL injection vulnerability in the search functionality.</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

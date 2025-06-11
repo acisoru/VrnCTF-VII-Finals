@@ -1,0 +1,44 @@
+name: shop
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: verf_petra
+    volumes:
+      - pgdata-shop:/var/lib/postgresql/data
+    networks:
+      - verf-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d verf_petra"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./static:/app/static
+    ports:
+      - "3500:8000"
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/verf_petra
+      SECRET_KEY: o3QUcL4ZGsoZu1RTzQbMePuNo4f89u
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 1440
+    networks:
+      - verf-net
+
+volumes:
+  pgdata-shop:
+
+networks:
+  verf-net:
+    driver: bridge

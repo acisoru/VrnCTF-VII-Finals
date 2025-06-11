@@ -1,0 +1,62 @@
+name: "Virtual fleet"
+author: "@pipeline_sh"
+category: "reverse"
+# Категория будет отображаться на платформе в описании таска. Поддерживается md формат
+description: |
+  По указу Его Царского Величества Петра Первого, заложены в Воронеже корабли нового образца — не бревенчатые, а виртуальные. 
+  Мудрецы из Немецкой слободы сотворили механизм, коий принимает приказы в особой тайнописи и исполняет их с небывалой точностью. 
+  Самое главное - обозначить себя правильно, кто ты есть. Машина умная, просто так слушаться не будет.
+attribution: "Автор [@pipeline_sh](https://t.me/pipeline_sh)"
+value: 1000
+type: dynamic # IDK how much it costs
+
+extra:
+  initial: 1000
+  decay: 10
+  minimum: 100
+
+files: 
+  - public/task.zip
+
+# Все способы описать флаг
+# flags:
+#     # A static case sensitive flag
+#     - flag{3xampl3}
+#     # A static case sensitive flag created with a dictionary
+#     - {
+#         type: "static",
+#         content: "flag{wat}",
+#     }
+#     # A static case insensitive flag
+#     - {
+#         type: "static",
+#         content: "flag{wat}",
+#         data: "case_insensitive",
+#     }
+#     # A regex case insensitive flag
+#     - {
+#         type: "regex",
+#         content: "(.*)STUFF(.*)",
+#         data: "case_insensitive",
+#     }
+
+flags:
+  - vrnctf{n0t_4_st3am_m4ch1ne}
+
+
+
+# Хинты по умолчанию скрыты, сделайте их заранее, их откроем на половине соревнований на нерешенные таски
+# hints:
+#     - {
+#         content: "This hint costs points",
+#         cost: 10
+#     }
+#     - This hint is free
+
+# hints:
+#   - "В чем отличие между gRPC и Web-gRPC? Просто в том, что вместо TCP мы указываем функцию в URL, а данные вместо ProtoBuf в JSON"
+
+# visible/hidden
+state: visible
+version: "0.1"
+

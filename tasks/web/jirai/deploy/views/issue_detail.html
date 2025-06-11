@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- HTMX for interactive UI -->
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <!-- Alpine.js for UI interactions -->
+    <script src="https://unpkg.com/alpinejs@3.13.0" defer></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <h1><a href="/">Jirai</a></h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/issues">Issues</a></li>
+                <li><a href="/issues/new">Create Issue</a></li>
+                <li><a href="/search">Search</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="page-header">
+                <h1>Issue: {{.Issue.Title}}</h1>
+                <div class="page-actions">
+                    <a href="/issues" class="btn btn-secondary">Back to Issues</a>
+                    <button class="btn btn-danger"
+                            hx-delete="/issues/{{.Issue.ID}}"
+                            hx-confirm="Are you sure you want to delete this issue?"
+                            hx-target="body"
+                            hx-push-url="/issues">
+                        Delete Issue
+                    </button>
+                </div>
+            </div>
+            
+            <div class="issue-detail-container">
+                <div class="issue-detail-header">
+                    <div class="issue-id">#{{.Issue.ID}}</div>
+                    <div class="issue-badges">
+                        <span class="status-badge status-{{.Issue.Status}}">{{.Issue.Status}}</span>
+                        <span class="priority-badge priority-{{.Issue.Priority}}">{{.Issue.Priority}}</span>
+                    </div>
+                </div>
+                
+                <div class="issue-metadata">
+                    <div class="meta-item">
+                        <strong>Created:</strong> {{.Issue.Created.Format "Jan 2, 2006 15:04:05"}}
+                    </div>
+                    <div class="meta-item">
+                        <strong>Updated:</strong> {{.Issue.Updated.Format "Jan 2, 2006 15:04:05"}}
+                    </div>
+                    <div class="meta-item">
+                        <strong>Creator:</strong> {{.Issue.Creator}}
+                    </div>
+                    <div class="meta-item">
+                        <strong>Assignee:</strong> {{.Issue.Assignee}}
+                    </div>
+                </div>
+                
+                <div class="issue-section">
+                    <h3>Description</h3>
+                    <div class="issue-description">
+                        {{if .Issue.Description}}
+                            {{.Issue.Description}}
+                        {{else}}
+                            <em>No description provided</em>
+                        {{end}}
+                    </div>
+                </div>
+                
+                <div class="issue-section">
+                    <h3>Labels</h3>
+                    <div class="issue-labels">
+                        {{range .Issue.Labels}}
+                            <span class="label">{{.}}</span>
+                        {{else}}
+                            <em>No labels</em>
+                        {{end}}
+                    </div>
+                </div>
+                
+                <div class="issue-section">
+                    <h3>Custom Fields</h3>
+                    <div class="issue-custom-fields">
+                        {{if .Issue.Fields}}
+                            <table class="custom-fields-table">
+                                <thead>
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{range $key, $value := .Issue.Fields}}
+                                    <tr>
+                                        <td>{{$key}}</td>
+                                        <td>{{$value}}</td>
+                                    </tr>
+                                    {{end}}
+                                </tbody>
+                            </table>
+                        {{else}}
+                            <em>No custom fields</em>
+                        {{end}}
+                    </div>
+                </div>
+                
+                <div class="issue-section">
+                    <h3>Comments</h3>
+                    <div class="issue-comments">
+                        {{range .Issue.Comments}}
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <span class="comment-author">{{.Author}}</span>
+                                    <span class="comment-date">{{.Created.Format "Jan 2, 2006 15:04:05"}}</span>
+                                </div>
+                                <div class="comment-content">
+                                    {{.Content}}
+                                </div>
+                            </div>
+                        {{else}}
+                            <em>No comments yet</em>
+                        {{end}}
+                    </div>
+                </div>
+                
+                <div class="issue-section">
+                    <h3>Update Issue</h3>
+                    <form hx-put="/issues/{{.Issue.ID}}" hx-target=".issue-detail-container" hx-swap="outerHTML" class="issue-form">
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <input type="text" id="title" name="title" class="form-control" value="{{.Issue.Title}}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description" class="form-control" rows="5">{{.Issue.Description}}</textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="status">Status</label>
+                                <select id="status" name="status" class="form-control">
+                                    <option value="todo" {{if eq .Issue.Status "todo"}}selected{{end}}>To Do</option>
+                                    <option value="in_progress" {{if eq .Issue.Status "in_progress"}}selected{{end}}>In Progress</option>
+                                    <option value="review" {{if eq .Issue.Status "review"}}selected{{end}}>In Review</option>
+                                    <option value="done" {{if eq .Issue.Status "done"}}selected{{end}}>Done</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group col-md-6">
+                                <label for="priority">Priority</label>
+                                <select id="priority" name="priority" class="form-control">
+                                    <option value="low" {{if eq .Issue.Priority "low"}}selected{{end}}>Low</option>
+                                    <option value="medium" {{if eq .Issue.Priority "medium"}}selected{{end}}>Medium</option>
+                                    <option value="high" {{if eq .Issue.Priority "high"}}selected{{end}}>High</option>
+                                    <option value="critical" {{if eq .Issue.Priority "critical"}}selected{{end}}>Critical</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="assignee">Assignee</label>
+                            <input type="text" id="assignee" name="assignee" class="form-control" value="{{.Issue.Assignee}}">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Update Issue</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Jirai - A JIRA-like Service. This application contains a deliberate NoSQL injection vulnerability in the search functionality.</p>
+        </div>
+    </footer>
+    
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

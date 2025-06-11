@@ -1,0 +1,9 @@
+name: peter_blog_2
+
+services:
+  app:
+    build: .
+    ports:
+      - "3001:5000"
+    volumes:
+      - .:/app

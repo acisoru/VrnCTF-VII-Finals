@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if error %}
+<div class="alert alert-danger" role="alert">
+  {{ error }}
+</div>
+{% endif %}
+
+{% if success %}
+<div class="alert alert-success" role="alert">
+  {{ success }}
+</div>
+{% endif %}
+
+<h2>Добро пожаловать, {{ user.username }}!</h2>
+<p>Баланс: <strong>{{ user.balance }}</strong> золотых рублей</p>
+<a href="/change-password" class="btn btn-warning mb-3">Сменить пароль</a>
+<button type="button" class="btn btn-danger mb-3 ms-2" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+  Удалить аккаунт
+</button>
+
+<!-- Modal for account deletion confirmation -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteAccountModalLabel">Подтверждение удаления</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Вы уверены, что хотите удалить свой аккаунт? Это действие невозможно отменить.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <form action="/delete-account" method="post">
+          <button type="submit" class="btn btn-danger">Да, удалить аккаунт</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3>Купленные чертежи</h3>
+<div class="row">
+  {% for it in purchases %}
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm">
+      <div class="img-container" style="position: relative; width: 100%; padding-bottom: 100%;">
+        <img src="{{ it.image }}" class="card-img-top" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+      </div>
+      <div class="card-body">
+        <h5>{{ it.title }}</h5>
+        <p>{{ it.description }}</p>
+        <form action="/shop/return" method="post">
+          <input type="hidden" name="item_id" value="{{ it.id }}">
+          <button type="submit" class="btn btn-danger">Вернуть</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

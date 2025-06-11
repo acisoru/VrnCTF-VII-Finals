@@ -1,0 +1,29 @@
+{{if .Issues}}
+    <p>Found {{.Count}} issues matching your search criteria.</p>
+    <table class="issues-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Assignee</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Issues}}
+            <tr>
+                <td><a href="/issues/{{.ID}}">{{.ID}}</a></td>
+                <td>{{.Title}}</td>
+                <td><span class="status-badge status-{{.Status}}">{{.Status}}</span></td>
+                <td><span class="priority-badge priority-{{.Priority}}">{{.Priority}}</span></td>
+                <td>{{.Assignee}}</td>
+                <td>{{.Created.Format "Jan 2, 2006"}}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+{{else}}
+    <p>No results found. Try adjusting your search criteria.</p>
+{{end}}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- HTMX for interactive UI -->
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <!-- Alpine.js for UI interactions -->
+    <script src="https://unpkg.com/alpinejs@3.13.0" defer></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <h1><a href="/">Jirai</a></h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/issues">Issues</a></li>
+                <li><a href="/issues/new">Create Issue</a></li>
+                <li><a href="/search">Search</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="home-hero">
+                <h1>Welcome to Jirai</h1>
+                <p class="lead">A JIRA-like task management service for your projects</p>
+                
+                <div class="hero-actions">
+                    <a href="/issues" class="btn btn-primary">View All Issues</a>
+                    <a href="/issues/new" class="btn btn-secondary">Create New Issue</a>
+                </div>
+            </div>
+            
+            <div class="home-features">
+                <div class="feature-card">
+                    <h3>Track Issues</h3>
+                    <p>Organize your work with a powerful issue tracking system</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Search &amp; Filter</h3>
+                    <p>Find what you need quickly with advanced search capabilities</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Real-time Updates</h3>
+                    <p>Stay informed with HTMX-powered real-time UI updates</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Jirai - A JIRA-like Service. This application contains a deliberate NoSQL injection vulnerability in the search functionality.</p>
+        </div>
+    </footer>
+    
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

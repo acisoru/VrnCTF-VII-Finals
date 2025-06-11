@@ -1,0 +1,8 @@
+name: collision
+
+services:
+  collision:
+    build: .
+    restart: always
+    ports:
+     - "1111:1111"

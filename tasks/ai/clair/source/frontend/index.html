@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AI Tasks</title>
+    <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+<header>
+    <h1>AI Tasks</h1>
+    <p>Слева чат для таска Clair, справа чат для таска Obscur</p>
+</header>
+<div class="music-block">
+    <p>Включить перед решением:</p>
+    <audio controls>
+        <source src="/static/assets/music.mp3" type="audio/mpeg"/>
+        Ваш браузер не поддерживает аудио.
+    </audio>
+</div>
+<main>
+    <section class="chat-panel" id="panel-clair">
+        <h2> Clair</h2>
+        <div class="messages" id="messages-clair"></div>
+        <form class="input-area" data-endpoint="/api/chat" id="form-clair">
+            <input type="text" placeholder="Ваше сообщение..." required/>
+            <button type="submit">Отправить</button>
+        </form>
+    </section>
+
+    <section class="chat-panel" id="panel-obscur">
+        <h2> Obscur</h2>
+        <div class="messages" id="messages-obscur"></div>
+        <form class="input-area" data-endpoint="/api/chat2" id="form-obscur">
+            <input type="text" placeholder="Ваше сообщение..." required/>
+            <button type="submit">Отправить</button>
+        </form>
+    </section>
+</main>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>

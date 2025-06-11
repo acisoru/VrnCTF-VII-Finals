@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- HTMX for interactive UI -->
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <!-- Alpine.js for UI interactions -->
+    <script src="https://unpkg.com/alpinejs@3.13.0" defer></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <h1><a href="/">Jirai</a></h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/issues">Issues</a></li>
+                <li><a href="/issues/new">Create Issue</a></li>
+                <li><a href="/search">Search</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="page-header">
+                <h1>Create New Issue</h1>
+            </div>
+            
+            <div class="issue-form-container">
+                <form hx-post="/issues" hx-target="#issues-container" hx-swap="beforeend" class="issue-form">
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" name="title" required class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="5" class="form-control"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="status">Status</label>
+                            <select id="status" name="status" class="form-control">
+                                <option value="todo">To Do</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="review">In Review</option>
+                                <option value="done">Done</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group col-md-6">
+                            <label for="priority">Priority</label>
+                            <select id="priority" name="priority" class="form-control">
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="assignee">Assignee</label>
+                        <input type="text" id="assignee" name="assignee" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="creator">Creator</label>
+                        <input type="text" id="creator" name="creator" required class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="custom_field_key">Custom Field Key</label>
+                        <input type="text" id="custom_field_key" class="form-control" placeholder="Enter custom field name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="custom_field_value">Custom Field Value</label>
+                        <input type="text" id="custom_field_value" class="form-control" placeholder="Enter custom field value">
+                        <button type="button" class="btn btn-sm btn-secondary mt-2" id="add-field">Add Custom Field</button>
+                    </div>
+                    
+                    <div id="custom-fields-container" class="mb-4">
+                        <!-- Custom fields will be added here dynamically -->
+                    </div>
+                    
+                    <div class="form-actions">
+                        <a href="/issues" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Create Issue</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Jirai - A JIRA-like Service. This application contains a deliberate NoSQL injection vulnerability in the search functionality.</p>
+        </div>
+    </footer>
+    
+    <script src="/static/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Handle adding custom fields
+            const addFieldBtn = document.getElementById('add-field');
+            const customFieldsContainer = document.getElementById('custom-fields-container');
+            const form = document.querySelector('.issue-form');
+            
+            addFieldBtn.addEventListener('click', () => {
+                const key = document.getElementById('custom_field_key').value.trim();
+                const value = document.getElementById('custom_field_value').value.trim();
+                
+                if (key && value) {
+                    // Create hidden fields for custom fields
+                    const hiddenKey = document.createElement('input');
+                    hiddenKey.type = 'hidden';
+                    hiddenKey.name = `fields[${key}]`;
+                    hiddenKey.value = value;
+                    
+                    // Create display element
+                    const fieldDisplay = document.createElement('div');
+                    fieldDisplay.className = 'custom-field-item';
+                    fieldDisplay.innerHTML = `
+                        <span class="field-key">${key}</span>: 
+                        <span class="field-value">${value}</span>
+                        <button type="button" class="btn-remove" title="Remove field">&times;</button>
+                    `;
+                    
+                    // Add event listener to remove button
+                    const removeBtn = fieldDisplay.querySelector('.btn-remove');
+                    removeBtn.addEventListener('click', () => {
+                        customFieldsContainer.removeChild(fieldDisplay);
+                        form.removeChild(hiddenKey);
+                    });
+                    
+                    // Add hidden field to form and display element to container
+                    form.appendChild(hiddenKey);
+                    customFieldsContainer.appendChild(fieldDisplay);
+                    
+                    // Clear inputs
+                    document.getElementById('custom_field_key').value = '';
+                    document.getElementById('custom_field_value').value = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

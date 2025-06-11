@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Магазин чертежей</h2>
+{% if error %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  {{ error }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+
+{% if success %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  {{ success }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+
+<div class="row">
+  {% for item in items %}
+  <div class="col-md-4 mb-4">
+    <div class="card h-100 shadow-sm">
+      <div class="img-container" style="position: relative; width: 100%; padding-bottom: 100%;">
+        <img src="{{ item.image }}" class="card-img-top" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+      </div>
+      <div class="card-body">
+        <h5>{{ item.title }}</h5>
+        <p>Цена: {{ item.price }} золотых рублей</p>
+        {% if user %}
+          {% if item.id in bought %}
+            <button class="btn btn-secondary" disabled>Куплено</button>
+          {% else %}
+            <form method="post" action="/shop/buy">
+              <input type="hidden" name="item_id" value="{{ item.id }}">
+              <button class="btn btn-primary">Купить</button>
+            </form>
+          {% endif %}
+        {% else %}
+          <a href="/login" class="btn btn-outline-primary">Войти чтобы купить</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
